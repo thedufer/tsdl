@@ -5144,6 +5144,19 @@ let get_power_info () =
 
 end
 
+module Img = struct
+  let from = Dl.(dlopen ~filename:"libSDL2_image.dylib" ~flags:[RTLD_NOW]);;
+
+  let load_png_rw =
+    foreign "IMG_LoadPNG_RW" ~from
+      (Sdl.rw_ops @-> returning (Sdl.some_to_ok Sdl.surface_opt))
+
+  let load_png file =
+    match Sdl.rw_from_file file "rb" with
+    | Error _ as e -> e
+    | Ok rw -> load_png_rw rw
+end
+
 (*---------------------------------------------------------------------------
    Copyright (c) 2013 The tsdl programmers
 

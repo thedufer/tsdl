@@ -3774,6 +3774,10 @@ val get_power_info : unit -> power_info
         (SDL legacy function)}} *)
 end
 
+module Img : sig
+  val load_png : string -> Sdl.surface Sdl.result
+end
+
 (** {1:conventions Binding conventions}
     {2:naming Naming}
 
