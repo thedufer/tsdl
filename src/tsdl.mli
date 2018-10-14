@@ -3778,6 +3778,17 @@ module Img : sig
   val load_png : string -> Sdl.surface Sdl.result
 end
 
+module Ttf : sig
+  type font
+
+  val init : unit -> unit Sdl.result
+
+  val open_font : string -> int -> font Sdl.result
+  val close_font : font -> unit Sdl.result
+
+  val render_text_blended : font -> string -> Sdl.color -> Sdl.surface Sdl.result
+end
+
 (** {1:conventions Binding conventions}
     {2:naming Naming}
 

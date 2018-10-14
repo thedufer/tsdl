@@ -5145,7 +5145,7 @@ let get_power_info () =
 end
 
 module Img = struct
-  let from = Dl.(dlopen ~filename:"libSDL2_image.dylib" ~flags:[RTLD_NOW]);;
+  let from = Dl.(dlopen ~filename:"libSDL2_image.dylib" ~flags:[RTLD_NOW])
 
   let load_png_rw =
     foreign "IMG_LoadPNG_RW" ~from
@@ -5155,6 +5155,34 @@ module Img = struct
     match Sdl.rw_from_file file "rb" with
     | Error _ as e -> e
     | Ok rw -> load_png_rw rw
+end
+
+module Ttf = struct
+  let from = Dl.(dlopen ~filename:"libSDL2_ttf.dylib" ~flags:[RTLD_NOW])
+
+  type _font
+  let font_struct : _font structure typ = structure "SDL_Font"
+  let font : _font structure ptr typ = ptr font_struct
+  let font_opt : _font structure ptr option typ = ptr_opt font_struct
+
+  type font = _font structure ptr
+
+  let init =
+    foreign "TTF_Init" ~from (void @-> returning Sdl.zero_to_ok)
+
+  let open_font =
+    foreign "TTF_OpenFont" ~from
+      (string @-> int @-> returning (Sdl.some_to_ok font_opt))
+
+  let close_font =
+    foreign "TTF_CloseFont" ~from (font @-> returning Sdl.zero_to_ok)
+
+  let render_text_blended =
+    foreign "TTF_RenderText_Blended" ~from
+      (font
+       @-> string
+       @-> Sdl.color
+       @-> returning (Sdl.some_to_ok Sdl.surface_opt))
 end
 
 (*---------------------------------------------------------------------------
